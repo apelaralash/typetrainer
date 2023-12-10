@@ -1,4 +1,4 @@
-package org.example.colors;
+package org.example.game.utils;
 
 import java.awt.*;
 
