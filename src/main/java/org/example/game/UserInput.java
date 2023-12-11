@@ -5,16 +5,17 @@ import java.awt.event.KeyListener;
 
 public final class UserInput implements KeyListener {
     private Character input;
-    private Boolean inptuWasGot;
+    private Boolean inputWasGot;
 
     public UserInput() {
         input = ' ';
-        inptuWasGot = true;
+        inputWasGot = true;
     }
 
     @Override
     public final void keyTyped(KeyEvent event) {
         Character temp = event.getKeyChar();
+        
         if (!Character.isLetterOrDigit(temp) &&
             !Character.isSpaceChar(temp) && // temp != ' ' &&
             temp != ',' &&
@@ -25,14 +26,14 @@ public final class UserInput implements KeyListener {
             return;
 
         input = temp;
-        inptuWasGot = false;
+        inputWasGot = false;
     }
 
     public final Character lastKey() {
-        if (inptuWasGot)
+        if (inputWasGot)
             return null;
         
-        inptuWasGot = true;
+        inputWasGot = true;
         return input;
     }
 

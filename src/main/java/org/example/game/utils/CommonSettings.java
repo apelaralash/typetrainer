@@ -5,7 +5,7 @@ import java.awt.Font;
 
 public class CommonSettings {
 // window
-    public static final Dimension windowSize = new Dimension(1280, 960);
+    public static final Dimension windowSize = new Dimension(1280, 512);
     // public static final Dimension windowSize = new Dimension(1280, 1024);
     public static final Short xTextPadding = 20;
 

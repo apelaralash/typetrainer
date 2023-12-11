@@ -3,28 +3,28 @@ package org.example.game;
 import java.awt.Graphics;
 import java.io.Serializable;
 import java.time.LocalTime;
+import java.util.concurrent.TimeUnit;
+import java.time.*;
 
 public final class GameState implements Serializable {
-    private TextVew text;
+    private TypingTest text;
 
-    private LocalTime timeStart;
+    private Long startTime, endTime;
     // private Double wpm;
     // private Byte accuracy; // in %
-    
 
     public GameState() {
-        timeStart = null;
-        text = new TextVew();
+        startTime = null;
+        endTime = null;
+        text = new TypingTest();
     }
     
     public void onInput(Character symbol) {
         if (symbol == null)
             return;
         
-        if (timeStart == null) {
-            timeStart = LocalTime.now();
-            System.out.println(timeStart);
-        }
+        if (startTime == null)
+            startTime = System.currentTimeMillis(); // nanoTime
 
         text.onInput(symbol);
 
@@ -32,7 +32,12 @@ public final class GameState implements Serializable {
     }
 
     public void update() {
-        //
+        if (text.compele()) {
+            if (endTime == null) {
+                endTime = System.currentTimeMillis();
+                System.out.println(TimeUnit.MILLISECONDS.toSeconds((endTime - startTime)));
+            }
+        }
     }
 
     public final void draw(Graphics graphics) {

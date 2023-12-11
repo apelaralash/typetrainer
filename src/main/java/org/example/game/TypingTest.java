@@ -7,14 +7,14 @@ import java.util.Arrays;
 import org.example.game.utils.CommonSettings;
 import org.example.game.utils.Palette;
 
-public final class TextVew implements Entity {
+public final class TypingTest implements Entity {
     private char[] text;
-    private boolean[] correctChars;
+    private boolean[] correctChars; // TO-DO: enum states of chars
     int countOfTyped;
 
-    public TextVew() {
+    public TypingTest() {
         // TO-DO: read text from file
-        // TO-DO: вместо пробелов можно какой-то спец символ выводить
+        // TO-DO: вместо пробелов можно какой-то спец символ выводить?+
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.".toCharArray();
 
         correctChars = new boolean[text.length];
@@ -30,6 +30,8 @@ public final class TextVew implements Entity {
         correctChars[countOfTyped] = (typed_char == text[countOfTyped]) ? true : false;
         countOfTyped += 1;
     }
+
+    public final boolean compele() { return countOfTyped == text.length; }
         
     @Override
     public final void update() {}
