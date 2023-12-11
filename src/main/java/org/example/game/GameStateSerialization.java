@@ -27,27 +27,29 @@ public final class GameStateSerialization {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-
     }
 
     public static GameState load(final String path_to_save_file) {
-        File save_file = new File(path_to_save_file);
+        return new GameState();
 
-        if (!save_file.exists())
-            return new GameState();
+        // TODO: delete first return and add logic to load from completed game
+        // File save_file = new File(path_to_save_file);
 
-        GameState new_state = null;
-        try (ObjectInputStream input_stream =
-                new ObjectInputStream(
-                    new BufferedInputStream(
-                        new FileInputStream(save_file)));
-        ) {
-            new_state = (GameState) input_stream.readObject();
-            input_stream.close();
-        } catch (IOException | ClassNotFoundException exception) {
-            exception.printStackTrace();
-        }
+        // if (!save_file.exists())
+        //     return new GameState();
 
-        return new_state;
+        // GameState new_state = null;
+        // try (ObjectInputStream input_stream =
+        //         new ObjectInputStream(
+        //             new BufferedInputStream(
+        //                 new FileInputStream(save_file)));
+        // ) {
+        //     new_state = (GameState) input_stream.readObject();
+        //     input_stream.close();
+        // } catch (IOException | ClassNotFoundException exception) {
+        //     exception.printStackTrace();
+        // }
+
+        // return new_state;
     }
 }

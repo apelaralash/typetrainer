@@ -1,5 +1,7 @@
-.gradle
 .vscode
+save.bin
+
+.gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
