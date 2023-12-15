@@ -27,7 +27,7 @@ public final class GameState implements Serializable {
     public GameState() {
         // startTime = null;
         // endTime = null;
-        text = new Text();
+        text = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
     }
     
     public void onInput(Character symbol) {

@@ -12,7 +12,7 @@ public class CommonSettings {
 // font
     public static final Integer fontSize = 48; // in px
     public static final Font font = new Font("Arial", Font.BOLD, fontSize);
-    public static final Integer lenghtOfLine = 50; // in chars
+    public static final Integer lenghtOfLine = 900; // in px
 
 // serizalization
     public static final String pathToSaveFile = "save.bin";
