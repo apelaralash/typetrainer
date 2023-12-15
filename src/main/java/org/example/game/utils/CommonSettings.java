@@ -16,4 +16,8 @@ public class CommonSettings {
 
 // serizalization
     public static final String pathToSaveFile = "save.bin";
+
+// texts
+    // TO-DO: add folder for text 
+    public static final String pathToTexts = "text";
 }

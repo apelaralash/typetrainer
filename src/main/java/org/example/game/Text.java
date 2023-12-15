@@ -8,27 +8,33 @@ import java.util.Arrays;
 import org.example.game.utils.CommonSettings;
 import org.example.game.utils.Palette;
 
-public final class TypingTest implements Entity {
-    // TO-DO: makes String[] to have a normal wraping of line
+public final class Text implements Entity {
     private char[] text;
+    // private String[] text;
+    // private int indexOfCurrentWord, indexOfCurrentLetter;
     private CharState[] charStates;
     int countOfTyped;
 
-    public TypingTest() {
+    public Text() {
         // TO-DO: read text from file
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.".toCharArray();
+        // text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.".split(" ");
+
+        // indexOfCurrentWord = 0;
+        // indexOfCurrentLetter = 0;
+        // countOfTyped = 0;
 
         charStates = new CharState[text.length];
         Arrays.fill(charStates, CharState.NonTyped);
 
-        countOfTyped = 0;
     }
         
     public final void onInput(Character typed_char) {
-        if (countOfTyped == correctChars.length)
+        if (countOfTyped == charStates.length)
             return;
         
-        correctChars[countOfTyped] = (typed_char == text[countOfTyped]) ? true : false;
+        charStates[countOfTyped] = (typed_char == text[countOfTyped]) ? CharState.Typed : CharState.Error;
+        // charStates[countOfTyped] = (typed_char == text[indexOfCurrentWord].charAt(indexOfCurrentLetter)) ? CharState.Typed : CharState.Error;
         countOfTyped += 1;
     }
 
@@ -57,15 +63,9 @@ public final class TypingTest implements Entity {
             }
 
             switch (charStates[index]) {
-                case NonTyped:
-                graphics.setColor(Pallete.normalText);
-                break;
-                case Typed:
-                graphics.setColor(Pallete.typedText);
-                break;
-                case Error:
-                graphics.setColor(Pallete.errorText);
-                break;
+                case NonTyped: graphics.setColor(Palette.normalText); break;
+                case Typed:    graphics.setColor(Palette.typedText); break;
+                case Error:    graphics.setColor(Palette.errorText); break;
             }
 
             int char_offset_in_lines = (number_of_line-1)*CommonSettings.lenghtOfLine;

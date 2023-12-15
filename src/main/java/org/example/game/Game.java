@@ -17,14 +17,13 @@ public final class Game {
             CommonSettings.windowSize.width,
             CommonSettings.windowSize.height
         );
-        // TO-DO: move serialization inside GameState?
-        state = GameStateSerialization.load(CommonSettings.pathToSaveFile);
+        state = GameState.load(CommonSettings.pathToSaveFile);
         input = new UserInput();
 
         window.addKeyListener(input);
         window.addWindowListener(
             // TO-DO: make it more simple if it using only one time
-            () -> GameStateSerialization.dump(state, CommonSettings.pathToSaveFile)
+            () -> GameState.dump(state, CommonSettings.pathToSaveFile)
         );
 
         window.present();
@@ -35,7 +34,7 @@ public final class Game {
         BufferedImage frame = new BufferedImage(
             CommonSettings.windowSize.width,
             CommonSettings.windowSize.height,
-            BufferedImage.TYPE_4BYTE_ABGR
+            BufferedImage.TYPE_INT_ARGB
         );
         Graphics frame_graphics = frame.getGraphics();
 

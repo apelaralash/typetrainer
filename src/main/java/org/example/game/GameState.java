@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.time.*;
 
 // Serialization )))
+import java.io.Serializable;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -15,8 +16,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+
 public final class GameState implements Serializable {
-    private TypingTest text;
+    private Text text;
 
     private Long startTime, endTime;
     // private Double wpm;
@@ -25,7 +27,7 @@ public final class GameState implements Serializable {
     public GameState() {
         startTime = null;
         endTime = null;
-        text = new TypingTest();
+        text = new Text();
     }
     
     public void onInput(Character symbol) {
