@@ -2,7 +2,6 @@ package org.example.game;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.lang.management.PlatformLoggingMXBean;
 import java.util.Arrays;
 
 import org.example.game.utils.CommonSettings;

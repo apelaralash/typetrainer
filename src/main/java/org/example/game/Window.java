@@ -1,13 +1,14 @@
 package org.example.game;
 
+import org.example.game.utils.LambdaHolder;
+
+import javafx.geometry.Dimension2D;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
-
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import org.example.game.utils.IOnWindowClosing;
 
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -17,11 +18,11 @@ public final class Window {
     private final JFrame frame;
     private JPanel canvas;
 
-    public Window(final String title, final int width, final int height) {
+    public Window(final String title, final Dimension window_size, KeyListener listener) {
         frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
-        frame.setSize(width, height);
+        frame.setSize(window_size.width, window_size.height);
         frame.setLocationRelativeTo(null);
         frame.setLayout(
             new BoxLayout(
@@ -30,25 +31,25 @@ public final class Window {
             )
         );
 
+        frame.addKeyListener(listener);
+
+        // mb change it to contantPane? idk
         canvas = new JPanel();
-        canvas.setPreferredSize(new Dimension(width, height));
+        canvas.setPreferredSize(window_size);
         frame.add(canvas);
 
         frame.pack();
     }
 
-    public final void addWindowListener(IOnWindowClosing action) {
+    public final void addWindowListener(LambdaHolder lambda) {
         frame.addWindowListener(
             new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent event) {
-                    action.windowClosing();
+                    lambda.action();
                 }
             }
         );
-    }
-    public final void addKeyListener(KeyListener listener) {
-        frame.addKeyListener(listener);
     }
 
     public final void present() {

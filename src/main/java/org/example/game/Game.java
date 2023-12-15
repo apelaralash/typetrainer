@@ -7,22 +7,18 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public final class Game {
-    private Window window;
     private GameState state;
     private UserInput input;
+    private Window window;
 
     public Game() {
-        window = new Window(
-            "TypeTrainer",
-            CommonSettings.windowSize.width,
-            CommonSettings.windowSize.height
-        );
         state = GameState.load(CommonSettings.pathToSaveFile);
-        input = new UserInput();
 
-        window.addKeyListener(input);
+        input = new UserInput();
+        window = new Window("TypeTrainer", CommonSettings.windowSize, input);
+
+        // TO-DO: make it more simple if it using only one time
         window.addWindowListener(
-            // TO-DO: make it more simple if it using only one time
             () -> GameState.dump(state, CommonSettings.pathToSaveFile)
         );
 
@@ -30,7 +26,6 @@ public final class Game {
     }
 
     public final void run() {
-        // TO-DO: search anolog of it what work on MAC
         BufferedImage frame = new BufferedImage(
             CommonSettings.windowSize.width,
             CommonSettings.windowSize.height,
