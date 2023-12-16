@@ -18,7 +18,7 @@ import java.io.ObjectOutputStream;
 
 
 public final class GameState implements Serializable {
-    private Text text;
+    private TextWidget text;
 
     // private Long startTime, endTime;
     // private Double wpm;
@@ -27,7 +27,9 @@ public final class GameState implements Serializable {
     public GameState() {
         // startTime = null;
         // endTime = null;
-        text = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        
+        // TO-DO: read text from file but from another place
+        text = new TextWidget("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
     }
     
     public void onInput(Character symbol) {
