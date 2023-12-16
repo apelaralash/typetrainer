@@ -5,71 +5,154 @@ import org.example.game.utils.Palette;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public final class TextWidget implements Entity {
-    private char[] text;
-    private CharState[] characterStates;
-    private int counterOfTyped;
+    private static char[][] wrappedText = null;
+
+    private String text;
+    private CharacterState[][] characterStates;
+    int indexOfCurrentLine, indexOfCurrentChar;
 
     public TextWidget(String text_to_type) {
-        counterOfTyped = 0;
+        text = text_to_type;
 
-        text = text_to_type.toCharArray();
-
-
-        characterStates = new CharState[text.length];
-        Arrays.fill(characterStates, CharState.NonTyped);
+        indexOfCurrentChar = 0;
+        indexOfCurrentLine = 0;
     }
         
-    public final void onInput(Character typed_char) {
-        if (counterOfTyped == characterStates.length)
+    public final void onInput(Character typed_char) {   
+        if (wrappedText == null)
             return;
         
-        characterStates[counterOfTyped] =
-            (typed_char == text[counterOfTyped]) ? CharState.Typed : CharState.Error;
-        
-        counterOfTyped += 1;
+        if (indexOfCurrentLine == wrappedText.length && indexOfCurrentChar == (wrappedText[wrappedText.length-1].length-1))
+            return;
+
+        characterStates[indexOfCurrentLine][indexOfCurrentChar] =
+            (wrappedText[indexOfCurrentLine][indexOfCurrentChar] == typed_char) ?
+                CharacterState.Typed : CharacterState.Error;
+
+        indexOfCurrentChar += 1;
+
+        if (wrappedText[indexOfCurrentLine].length == indexOfCurrentChar) {
+            indexOfCurrentChar = 0;
+            indexOfCurrentLine += 1;
+        }
     }
 
-    public final boolean compele() { return counterOfTyped == text.length; }
+    public final boolean compele() {
+        return (
+            indexOfCurrentLine == wrappedText.length &&
+            indexOfCurrentChar == (wrappedText[wrappedText.length-1].length-1)
+        );
+    }
         
+    private final ArrayList<Integer> getIndicesOfTheLastWordsInLines(String[] words, FontMetrics font_metrics) {
+        ArrayList<Integer> last_words_indeices = new ArrayList<>();  // indices_of_the_last_words_in_lines
+
+        int space_char_width = font_metrics.charWidth(' ');
+        int length_of_line = 0;
+        int next_length_of_line = 0;
+        int index = 0;
+
+        // looking for indices of the last words in lines
+        for (; index < words.length; ++index) {
+            length_of_line = 0;
+            next_length_of_line = 0;
+    
+            while (next_length_of_line < CommonSettings.lenghtOfLine) {
+                length_of_line += font_metrics.stringWidth(words[index] + space_char_width);
+
+                index += 1;
+
+                if (index + 1 >= words.length)
+                    break;
+
+                int next_word_length = font_metrics.stringWidth(words[index + 1]);
+                next_length_of_line += length_of_line + next_word_length + space_char_width;
+
+                // that was here but we skip last word
+                // need to check on valid when it in other place
+                // index += 1;
+            }
+
+            last_words_indeices.add(index);
+        }
+
+        return last_words_indeices;
+    }
+
+    private final char[][] getTextToDraw(String text, FontMetrics font_metrics) {
+        String[] words = text.split(" ");
+        ArrayList<Integer> last_words_indeices = getIndicesOfTheLastWordsInLines(words, font_metrics);
+        
+        char[][] result = new char[last_words_indeices.size()][];
+        StringBuilder line = new StringBuilder();
+        int last_word_index = 0;
+        
+        // creating double dimension array for text what need to draw
+        for (int line_index=0; line_index < last_words_indeices.size(); ++line_index) {
+            for (
+                int word_index = last_word_index;
+                word_index < last_words_indeices.get(line_index);
+                ++word_index
+            ) {
+                line.append(words[word_index] + " ");
+                last_word_index = last_words_indeices.get(line_index);
+            }
+            line.deleteCharAt(line.length()-1); // delete last space char in line
+            
+            result[line_index] = line.toString().toCharArray();
+            line = new StringBuilder();
+        }
+
+        return result;
+    }
+ 
     @Override
     public final void draw(Graphics graphics) {
         graphics.setFont(CommonSettings.font);
         FontMetrics font_metrics = graphics.getFontMetrics();
 
-        // int space_char_width = font_metrics.charWidth(' ');
-        // int lineHeight = new Double(
-        //     CommonSettings.fontSize * CommonSettings.leading_factor
-        // ).intValue();
-
-        // int offsetX = 0;
-        // int number_of_line = 0;
-        // int length_of_drawn_string = 0;
-        
-        // for (int index=0; index < words.length; ++index) {
-        //     switch (charStates[index]) {
-        //         case NonTyped: graphics.setColor(Palette.normalText); break;
-        //         case Typed:    graphics.setColor(Palette.typedText); break;
-        //         case Error:    graphics.setColor(Palette.errorText); break;
-        //     }
-
-        //     graphics.drawString(
-        //         words[index],
-        //         CommonSettings.xTextPadding + offsetX,
-        //         number_of_line * font_metrics.getHeight() + lineHeight
-        //     );
+        if (wrappedText == null) {
+            wrappedText = getTextToDraw(text, font_metrics);
             
-        //     offsetX += font_metrics.stringWidth(words[index]) + space_char_width;
-        //     length_of_drawn_string += font_metrics.stringWidth(words[index]);
+            characterStates = new CharacterState[wrappedText.length][];
+            for (int index=0; index < characterStates.length; ++index) {
+                characterStates[index] = new CharacterState[wrappedText[index].length];
+                Arrays.fill(characterStates[index], CharacterState.NonTyped);
+            }
+        }
 
-        //     if (length_of_drawn_string >= CommonSettings.lenghtOfLine) {
-        //         number_of_line += 1;
-        //         length_of_drawn_string = 0;
-        //         offsetX = 0;
-        //     }
-        // }
+        int offsetX = 0;
+        int paddingX = (CommonSettings.windowSize.width - CommonSettings.lenghtOfLine) / 2; // need to fix should be 2!
+        int leading = new Double(
+            CommonSettings.fontSize * CommonSettings.leading_factor
+        ).intValue();
+
+        for (int line_index=0; line_index < wrappedText.length; ++line_index) {
+            for (int char_index=0; char_index < wrappedText[line_index].length; ++char_index) {
+                switch (characterStates[line_index][char_index]) {
+                    case NonTyped: graphics.setColor(Palette.normalText); break;
+                    case Typed:    graphics.setColor(Palette.typedText); break;
+                    case Error:    graphics.setColor(Palette.errorText); break;
+                }
+                
+                graphics.drawChars(
+                    wrappedText[line_index],
+                    char_index,
+                    1,
+                    paddingX + offsetX,
+                    line_index * font_metrics.getHeight() + leading
+                );
+
+                offsetX += font_metrics.charWidth(wrappedText[line_index][char_index]);
+            }
+
+            offsetX = 0;
+        }
     }
 
     @Override public final void update() {}

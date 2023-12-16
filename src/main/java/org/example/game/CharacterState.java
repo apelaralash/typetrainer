@@ -1,6 +1,6 @@
 package org.example.game;
 
-public enum CharState {
+public enum CharacterState {
     Typed,
     Error,
     NonTyped

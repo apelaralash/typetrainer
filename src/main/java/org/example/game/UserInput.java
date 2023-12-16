@@ -17,11 +17,13 @@ public final class UserInput implements KeyListener {
         Character temp = event.getKeyChar();
         
         if (!Character.isLetterOrDigit(temp) &&
-            !Character.isSpaceChar(temp) && // temp != ' ' &&
+            !Character.isSpaceChar(temp) &&
             temp != ',' &&
             temp != '.' &&
             temp != '!' &&
-            temp != '?'
+            temp != '?' &&
+            temp != ';' &&
+            temp != ':'
         )
             return;
 

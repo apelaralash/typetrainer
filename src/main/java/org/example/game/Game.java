@@ -10,6 +10,7 @@ public final class Game {
     private GameState state;
     private UserInput input;
     private Window window;
+    // private UI ui;
 
     public Game() {
         state = GameState.load(CommonSettings.pathToSaveFile);
