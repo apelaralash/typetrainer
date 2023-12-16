@@ -13,8 +13,6 @@ public final class Game {
     // private UI ui;
 
     public Game() {
-        state = GameState.load(CommonSettings.pathToSaveFile);
-
         input = new UserInput();
         window = new Window("TypeTrainer", CommonSettings.windowSize, input);
 
@@ -33,6 +31,7 @@ public final class Game {
             BufferedImage.TYPE_INT_ARGB
         );
         Graphics frame_graphics = frame.getGraphics();
+        state = GameState.load(CommonSettings.pathToSaveFile, frame_graphics);
 
         while (true) {
             frame_graphics.setColor(Palette.background);

@@ -9,11 +9,11 @@ import java.awt.Graphics;
 import java.io.File;
 import java.io.Serializable;
 import java.io.IOException;
-// import java.io.BufferedInputStream;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-// import java.io.FileInputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-// import java.io.ObjectInputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 
@@ -24,12 +24,15 @@ public final class GameState implements Serializable {
     // private Double wpm;
     // private Byte accuracy; // in %
 
-    public GameState() {
+    public GameState(Graphics graphics) {
         // startTime = null;
         // endTime = null;
         
         // TO-DO: read text from file but from another place
-        text = new TextWidget("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        text = new TextWidget(
+            graphics,
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        );
     }
     
     public void onInput(Character symbol) {
@@ -57,6 +60,8 @@ public final class GameState implements Serializable {
         text.draw(graphics);
     }
 
+    public final boolean testCompleted() { return text.compele(); }
+
     public static void dump(GameState state, final String path_to_save_file) {
         try (ObjectOutputStream output_stream =
             new ObjectOutputStream(
@@ -72,27 +77,27 @@ public final class GameState implements Serializable {
         }
     }
 
-    public static GameState load(final String path_to_save_file) {
-        return new GameState();
+    public static GameState load(final String path_to_save_file, Graphics graphics) {
+        File save_file = new File(path_to_save_file);
 
-        // TODO: delete first return and add logic to load from completed game
-        // File save_file = new File(path_to_save_file);
+        if (!save_file.exists())
+            return new GameState(graphics);
 
-        // if (!save_file.exists())
-        //     return new GameState();
+        GameState new_state = null;
+        try (ObjectInputStream input_stream =
+                new ObjectInputStream(
+                    new BufferedInputStream(
+                        new FileInputStream(save_file)));
+        ) {
+            new_state = (GameState) input_stream.readObject();
+            input_stream.close();
+        } catch (IOException | ClassNotFoundException exception) {
+            exception.printStackTrace();
+        }
 
-        // GameState new_state = null;
-        // try (ObjectInputStream input_stream =
-        //         new ObjectInputStream(
-        //             new BufferedInputStream(
-        //                 new FileInputStream(save_file)));
-        // ) {
-        //     new_state = (GameState) input_stream.readObject();
-        //     input_stream.close();
-        // } catch (IOException | ClassNotFoundException exception) {
-        //     exception.printStackTrace();
-        // }
+        if (new_state == null || new_state.testCompleted())
+            return new GameState(graphics);
 
-        // return new_state;
+        return new_state;
     }
 }

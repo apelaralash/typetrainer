@@ -10,24 +10,30 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 public final class TextWidget implements Entity {
-    private static char[][] wrappedText = null;
-
-    private String text;
+    private char[][] wrappedText;
     private CharacterState[][] characterStates;
-    int indexOfCurrentLine, indexOfCurrentChar;
+    private int indexOfCurrentLine, indexOfCurrentChar;
 
-    public TextWidget(String text_to_type) {
-        text = text_to_type;
-
+    public TextWidget(Graphics graphics, String text_to_type) {
         indexOfCurrentChar = 0;
         indexOfCurrentLine = 0;
+
+        graphics.setFont(CommonSettings.font);
+        FontMetrics font_metrics = graphics.getFontMetrics();
+        wrappedText = getTextToDraw(text_to_type, font_metrics);
+
+        characterStates = new CharacterState[wrappedText.length][];
+        for (int index=0; index < characterStates.length; ++index) {
+            characterStates[index] = new CharacterState[wrappedText[index].length];
+            Arrays.fill(characterStates[index], CharacterState.NonTyped);
+        }
     }
         
     public final void onInput(Character typed_char) {   
         if (wrappedText == null)
             return;
         
-        if (indexOfCurrentLine == wrappedText.length && indexOfCurrentChar == (wrappedText[wrappedText.length-1].length-1))
+        if (indexOfCurrentLine >= wrappedText.length)
             return;
 
         characterStates[indexOfCurrentLine][indexOfCurrentChar] =
@@ -44,8 +50,7 @@ public final class TextWidget implements Entity {
 
     public final boolean compele() {
         return (
-            indexOfCurrentLine == wrappedText.length &&
-            indexOfCurrentChar == (wrappedText[wrappedText.length-1].length-1)
+            indexOfCurrentLine >= wrappedText.length
         );
     }
         
@@ -115,16 +120,6 @@ public final class TextWidget implements Entity {
     public final void draw(Graphics graphics) {
         graphics.setFont(CommonSettings.font);
         FontMetrics font_metrics = graphics.getFontMetrics();
-
-        if (wrappedText == null) {
-            wrappedText = getTextToDraw(text, font_metrics);
-            
-            characterStates = new CharacterState[wrappedText.length][];
-            for (int index=0; index < characterStates.length; ++index) {
-                characterStates[index] = new CharacterState[wrappedText[index].length];
-                Arrays.fill(characterStates[index], CharacterState.NonTyped);
-            }
-        }
 
         int offsetX = 0;
         int paddingX = (CommonSettings.windowSize.width - CommonSettings.lenghtOfLine) / 2; // need to fix should be 2!
