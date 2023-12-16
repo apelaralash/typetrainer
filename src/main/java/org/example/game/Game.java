@@ -16,7 +16,6 @@ public final class Game {
         input = new UserInput();
         window = new Window("TypeTrainer", CommonSettings.windowSize, input);
 
-        // TO-DO: make it more simple if it using only one time
         window.addWindowListener(
             () -> GameState.dump(state, CommonSettings.pathToSaveFile)
         );

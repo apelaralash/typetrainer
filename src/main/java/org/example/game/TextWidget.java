@@ -151,7 +151,7 @@ public final class TextWidget implements Entity {
         for (int line_index=0; line_index < wrappedText.length; ++line_index) {
             for (int char_index=0; char_index < wrappedText[line_index].length; ++char_index) {
                 switch (characterStates[line_index][char_index]) {
-                    case NonTyped: graphics.setColor(Palette.normalText); break;
+                    case NonTyped: graphics.setColor(Palette.nonTypedText); break;
                     case Typed:    graphics.setColor(Palette.typedText); break;
                     case Error:    graphics.setColor(Palette.errorText); break;
                 }
