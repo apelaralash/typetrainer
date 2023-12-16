@@ -13,10 +13,12 @@ public final class TextWidget implements Entity {
     private char[][] wrappedText;
     private CharacterState[][] characterStates;
     private int indexOfCurrentLine, indexOfCurrentChar;
+    private int numberOfWords;
 
     public TextWidget(Graphics graphics, String text_to_type) {
         indexOfCurrentChar = 0;
         indexOfCurrentLine = 0;
+        numberOfWords = 0;
 
         graphics.setFont(CommonSettings.font);
         FontMetrics font_metrics = graphics.getFontMetrics();
@@ -48,7 +50,7 @@ public final class TextWidget implements Entity {
         }
     }
 
-    public final boolean compele() {
+    public final boolean complete() {
         return (
             indexOfCurrentLine >= wrappedText.length
         );
@@ -91,6 +93,7 @@ public final class TextWidget implements Entity {
 
     private final char[][] getTextToDraw(String text, FontMetrics font_metrics) {
         String[] words = text.split(" ");
+        numberOfWords = words.length;
         ArrayList<Integer> last_words_indeices = getIndicesOfTheLastWordsInLines(words, font_metrics);
         
         char[][] result = new char[last_words_indeices.size()][];
@@ -116,6 +119,24 @@ public final class TextWidget implements Entity {
         return result;
     }
  
+    public final String accuracy() {
+        int correct = 0;
+        int total_chars = 0;
+
+        for (CharacterState[] state_line : characterStates)
+            for (CharacterState state : state_line) {
+                total_chars += 1;
+                if (state == CharacterState.Typed)
+                    correct += 1;
+            }
+
+        return String.format("3%s", (double)correct / (double)total_chars);
+    }
+
+    public final String wpm(Long totalTime) {
+        return String.format("3%s", (double)numberOfWords/totalTime);
+    }
+
     @Override
     public final void draw(Graphics graphics) {
         graphics.setFont(CommonSettings.font);

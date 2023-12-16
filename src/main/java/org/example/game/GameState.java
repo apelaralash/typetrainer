@@ -1,9 +1,7 @@
 package org.example.game;
 
 import java.awt.Graphics;
-// import java.time.LocalTime;
-// import java.util.concurrent.TimeUnit;
-// import java.time.*;
+import java.util.concurrent.TimeUnit;
 
 // Serialization )))
 import java.io.File;
@@ -20,13 +18,13 @@ import java.io.ObjectOutputStream;
 public final class GameState implements Serializable {
     private TextWidget text;
 
-    // private Long startTime, endTime;
+    private Long startTime, endTime;
     // private Double wpm;
     // private Byte accuracy; // in %
 
     public GameState(Graphics graphics) {
-        // startTime = null;
-        // endTime = null;
+        startTime = null;
+        endTime = null;
         
         // TO-DO: read text from file but from another place
         text = new TextWidget(
@@ -39,8 +37,8 @@ public final class GameState implements Serializable {
         if (symbol == null)
             return;
         
-        // if (startTime == null)
-        //     startTime = System.currentTimeMillis(); // nanoTime
+        if (startTime == null)
+            startTime = System.currentTimeMillis(); // nanoTime
 
         // TO-DO: change wpm, accuracy, etc.
         
@@ -48,21 +46,26 @@ public final class GameState implements Serializable {
     }
 
     public void update() {
-        // if (text.compele()) {
-        //     if (endTime == null) {
-        //         endTime = System.currentTimeMillis();
-        //         System.out.println(TimeUnit.MILLISECONDS.toSeconds((endTime - startTime)));
-        //     }
-        // }
+        if (testCompleted()) {
+            if (endTime == null) {
+                endTime = System.currentTimeMillis();
+                // System.out.println(TimeUnit.MILLISECONDS.toSeconds((endTime - startTime)));
+                // System.out.println(text.accuracy());
+                // System.out.println(text.wpm(TimeUnit.MILLISECONDS.toSeconds((endTime - startTime))));
+            }
+        }
     }
 
     public final void draw(Graphics graphics) {
         text.draw(graphics);
     }
 
-    public final boolean testCompleted() { return text.compele(); }
+    public final boolean testCompleted() { return text.complete(); }
 
     public static void dump(GameState state, final String path_to_save_file) {
+        if (state.testCompleted())
+            return;
+
         try (ObjectOutputStream output_stream =
             new ObjectOutputStream(
                 new BufferedOutputStream(
