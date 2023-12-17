@@ -12,12 +12,10 @@ public final class TypingTextDrawer implements Entity {
     private ArrayList<char[]> wrappedText;
     private CharacterState[][] characterStates;
     private int indexOfCurrentLine, indexOfCurrentChar;
-    private int numberOfWords;
 
     public TypingTextDrawer(String text_to_type) {
         indexOfCurrentChar = 0;
         indexOfCurrentLine = 0;
-        numberOfWords = 0;
 
         wrappedText = wrapText(text_to_type.split(" "));
 
