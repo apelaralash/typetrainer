@@ -3,7 +3,6 @@ package org.example;
 import org.example.game.Game;
 
 // TO-DO:
-// - text from file
 // - refactoring of TextWidget
 // - UI and restart
 

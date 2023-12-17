@@ -3,13 +3,11 @@ package org.example.game;
 import org.example.game.utils.CommonSettings;
 
 import java.awt.Graphics;
-// import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public final class GameState implements Serializable {
     private TextWidget text;
@@ -18,7 +16,7 @@ public final class GameState implements Serializable {
     // private Double wpm;
     // private Byte accuracy; // in %
 
-    public GameState(Graphics graphics) {
+    public GameState() {
         startTime = null;
         endTime = null;
         
@@ -76,11 +74,11 @@ public final class GameState implements Serializable {
         }
     }
 
-    public static GameState load(final String path_to_save_file, Graphics graphics) {
+    public static GameState load(final String path_to_save_file) {
         File save_file = new File(path_to_save_file);
 
         if (!save_file.exists())
-            return new GameState(graphics);
+            return new GameState();
 
         GameState new_state = null;
         try (ObjectInputStream input_stream =
@@ -95,7 +93,7 @@ public final class GameState implements Serializable {
         }
 
         if (new_state == null || new_state.testCompleted())
-            return new GameState(graphics);
+            return new GameState();
 
         return new_state;
     }

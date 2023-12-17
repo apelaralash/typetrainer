@@ -16,6 +16,8 @@ public final class Game {
         input = new UserInput();
         window = new Window("TypeTrainer", CommonSettings.windowSize, input);
 
+        state = GameState.load(CommonSettings.pathToSaveFile);
+
         window.addWindowListener(
             () -> GameState.dump(state, CommonSettings.pathToSaveFile)
         );
@@ -27,10 +29,9 @@ public final class Game {
         BufferedImage frame = new BufferedImage(
             CommonSettings.windowSize.width,
             CommonSettings.windowSize.height,
-            BufferedImage.TYPE_INT_ARGB
+            BufferedImage.TYPE_4BYTE_ABGR_PRE
         );
         Graphics frame_graphics = frame.getGraphics();
-        state = GameState.load(CommonSettings.pathToSaveFile, frame_graphics);
 
         while (true) {
             frame_graphics.setColor(Palette.background);
