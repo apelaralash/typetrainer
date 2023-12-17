@@ -10,12 +10,13 @@ public final class Game {
     private GameState state;
     private UserInput input;
     private Window window;
-    // private UI ui;
+    private UI ui;
 
     public Game() {
         input = new UserInput();
         window = new Window("TypeTrainer", CommonSettings.windowSize, input);
 
+        ui = new UI();
         state = GameState.load(CommonSettings.pathToSaveFile);
 
         window.addWindowListener(
@@ -40,9 +41,21 @@ public final class Game {
                 CommonSettings.windowSize.width, CommonSettings.windowSize.height
             );
 
-            state.onInput(input.lastKey());
-            state.update();
-            state.draw(frame_graphics);
+            if (!state.testCompleted()) {
+                state.onInput(input.lastKey());
+                state.update();
+                state.draw(frame_graphics);
+            }
+            else {
+                ui.setTime(state.totalTime());
+                ui.setWpm(state.totalWpm());
+                ui.setAccuracy(state.totalAccuracy());
+                ui.onInput(input.lastKey());
+                ui.update();
+                ui.draw(frame_graphics);
+                if (ui.needRestart())
+                    state = new GameState();
+            }
 
             window.graphics().drawImage(frame, 0, 0, null);
         }

@@ -1,21 +1,20 @@
-package org.example.game;
+package org.example.game.gameState;
 
 import org.example.game.utils.CommonSettings;
 import org.example.game.utils.Palette;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-
 import java.util.Arrays;
 import java.util.ArrayList;
 
-public final class TextWidget implements Entity {
+public final class TypingTextDrawer implements Entity {
     private ArrayList<char[]> wrappedText;
     private CharacterState[][] characterStates;
     private int indexOfCurrentLine, indexOfCurrentChar;
     private int numberOfWords;
 
-    public TextWidget(String text_to_type) {
+    public TypingTextDrawer(String text_to_type) {
         indexOfCurrentChar = 0;
         indexOfCurrentLine = 0;
         numberOfWords = 0;
@@ -38,7 +37,6 @@ public final class TextWidget implements Entity {
 
         // backspace
         if (typed_char == '\b') {
-
             if (indexOfCurrentChar > 0)
                 indexOfCurrentChar -= 1;
             else if (indexOfCurrentChar == 0 && indexOfCurrentLine > 0) {
@@ -90,9 +88,7 @@ public final class TextWidget implements Entity {
         graphics.setFont(CommonSettings.font);
         FontMetrics font_metrics = graphics.getFontMetrics();
 
-        int paddingX = 100;
         int paddingY = (CommonSettings.windowSize.height - (font_metrics.getHeight() * wrappedText.size()))/2;
-        
         int offsetX = 0;
 
         for (int line_index=0; line_index < wrappedText.size(); ++line_index) {
@@ -107,9 +103,8 @@ public final class TextWidget implements Entity {
                     wrappedText.get(line_index),
                     char_index,
                     1,
-                    paddingX + offsetX,
+                    CommonSettings.paddingX + offsetX,
                     paddingY + line_index * font_metrics.getHeight()
-                    // paddingY + line_index * font_metrics.getHeight() + leading
                 );
 
                 offsetX += font_metrics.charWidth(wrappedText.get(line_index)[char_index]);
@@ -131,17 +126,18 @@ public final class TextWidget implements Entity {
                 if (state == CharacterState.Typed)
                     correct += 1;
             }
-
-        return String.format("3%s", (double)correct / (double)total_chars);
+        
+        return String.format("%.2f", (((double)correct) / total_chars) * 100 );
     }
 
     public final String wpm(Long totalTime) {
-        return String.format("3%s", (double)numberOfWords/totalTime);
+        int total_chars = 0;
+        for (CharacterState[] state_line : characterStates)
+            total_chars += state_line.length;
+
+        return String.format("%.2f", (((double)total_chars)/5) / ((double)totalTime / 60));
     }
 
-    public final boolean complete() {
-        return (
-            indexOfCurrentLine >= wrappedText.size()
-        );
-    }  
+    public final boolean complete() { return indexOfCurrentLine >= wrappedText.size(); }
+    public final boolean empty() { return indexOfCurrentChar == 0 && indexOfCurrentLine == 0; }
 }

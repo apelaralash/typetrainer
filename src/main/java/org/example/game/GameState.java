@@ -1,5 +1,7 @@
 package org.example.game;
 
+import org.example.game.gameState.GameStateSerializable;
+import org.example.game.gameState.TypingTextDrawer;
 import org.example.game.utils.CommonSettings;
 
 import java.awt.Graphics;
@@ -9,9 +11,8 @@ import java.util.Random;
 import java.io.*;
 import java.nio.file.Files;
 
-public final class GameState implements Serializable {
-    private TextWidget text;
-
+public final class GameState extends GameStateSerializable {
+    private TypingTextDrawer text;
     private Long startTime, endTime;
     // private Double wpm;
     // private Byte accuracy; // in %
@@ -20,13 +21,9 @@ public final class GameState implements Serializable {
         startTime = null;
         endTime = null;
         
-        // TO-DO: read text from file but from another place
-        text = new TextWidget(
+        text = new TypingTextDrawer(
             loadText()
         );
-        // text = new TextWidget(
-        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-        // );
     }
     
     public void onInput(Character symbol) {
@@ -43,9 +40,6 @@ public final class GameState implements Serializable {
         if (testCompleted()) {
             if (endTime == null) {
                 endTime = System.currentTimeMillis();
-                // System.out.println(TimeUnit.MILLISECONDS.toSeconds((endTime - startTime)));
-                // System.out.println(text.accuracy());
-                // System.out.println(text.wpm(TimeUnit.MILLISECONDS.toSeconds((endTime - startTime))));
             }
         }
     }
@@ -54,49 +48,21 @@ public final class GameState implements Serializable {
         text.draw(graphics);
     }
 
+    public final String totalTime() {
+        return Long.toString(
+            TimeUnit.MILLISECONDS.toSeconds((endTime - startTime))
+        );
+    }
+
+    public final String totalWpm() {
+        return text.wpm(TimeUnit.MILLISECONDS.toSeconds((endTime - startTime)));
+    }
+
+    public final String totalAccuracy() {
+        return text.accuracy();
+    }
+
     public final boolean testCompleted() { return text.complete(); }
-
-    public static void dump(GameState state, final String path_to_save_file) {
-        // if (state.testCompleted())
-        //     return;
-
-        try (ObjectOutputStream output_stream =
-            new ObjectOutputStream(
-                new BufferedOutputStream(
-                    new FileOutputStream(
-                        new File(path_to_save_file), false)));
-        ) {
-            output_stream.writeObject(state);
-            output_stream.flush();
-            output_stream.close();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    public static GameState load(final String path_to_save_file) {
-        File save_file = new File(path_to_save_file);
-
-        if (!save_file.exists())
-            return new GameState();
-
-        GameState new_state = null;
-        try (ObjectInputStream input_stream =
-                new ObjectInputStream(
-                    new BufferedInputStream(
-                        new FileInputStream(save_file)));
-        ) {
-            new_state = (GameState) input_stream.readObject();
-            input_stream.close();
-        } catch (IOException | ClassNotFoundException exception) {
-            exception.printStackTrace();
-        }
-
-        if (new_state == null || new_state.testCompleted())
-            return new GameState();
-
-        return new_state;
-    }
 
     private final String loadText() {
         File text_dir = new File(CommonSettings.pathToTexts);
@@ -107,6 +73,9 @@ public final class GameState implements Serializable {
         for (File file : text_dir.listFiles())
             if (file.isFile())
                 files.add(file);
+
+        if (files.size() == 0)
+            throw new RuntimeException("no texts to load!");
 
         File text = files.get(
             random.nextInt(files.size())
@@ -119,11 +88,9 @@ public final class GameState implements Serializable {
             );
             input.close();
           } catch (IOException exception) {
-        //   } catch (IOException | ClassNotFoundException exception) {
             exception.printStackTrace();
           }
 
           return result.get(0);
-        // return " ";
     }
 }

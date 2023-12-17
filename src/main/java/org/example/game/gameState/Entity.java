@@ -1,4 +1,4 @@
-package org.example.game;
+package org.example.game.gameState;
 
 import java.awt.Graphics;
 import java.io.Serializable;

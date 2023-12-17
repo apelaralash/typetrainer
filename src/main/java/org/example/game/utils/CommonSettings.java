@@ -6,6 +6,7 @@ import java.awt.Font;
 public class CommonSettings {
 // window
     public static final Dimension windowSize = new Dimension(1280, 960);
+    public static final Integer paddingX = 100;
 
 // font
     public static final Integer fontSize = 48; // in px
@@ -16,6 +17,5 @@ public class CommonSettings {
     public static final String pathToSaveFile = "save.bin";
 
 // texts
-    // TO-DO: add folder for text 
     public static final String pathToTexts = "text/";
 }
