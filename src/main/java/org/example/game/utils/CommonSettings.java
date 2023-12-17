@@ -17,5 +17,5 @@ public class CommonSettings {
 
 // texts
     // TO-DO: add folder for text 
-    public static final String pathToTexts = "text";
+    public static final String pathToTexts = "text/";
 }

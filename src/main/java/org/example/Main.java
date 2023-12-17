@@ -3,9 +3,8 @@ package org.example;
 import org.example.game.Game;
 
 // TO-DO:
-// - text removal
-// - refactoring of TextWidget
 // - text from file
+// - refactoring of TextWidget
 // - UI and restart
 
 public class Main {

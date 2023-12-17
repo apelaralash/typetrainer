@@ -1,19 +1,15 @@
 package org.example.game;
 
+import org.example.game.utils.CommonSettings;
+
 import java.awt.Graphics;
 // import java.util.concurrent.TimeUnit;
-
-// Serialization )))
-import java.io.File;
-import java.io.Serializable;
-import java.io.IOException;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
+import java.util.ArrayList;
+import java.util.Random;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public final class GameState implements Serializable {
     private TextWidget text;
@@ -27,6 +23,9 @@ public final class GameState implements Serializable {
         endTime = null;
         
         // TO-DO: read text from file but from another place
+        // text = new TextWidget(
+            loadText();
+        // );
         text = new TextWidget(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         );
@@ -99,5 +98,40 @@ public final class GameState implements Serializable {
             return new GameState(graphics);
 
         return new_state;
+    }
+
+    private final String loadText() {
+        File text_dir = new File(CommonSettings.pathToTexts);
+        ArrayList<File> files = new ArrayList<>();
+        // Random random = new Random();
+        // ArrayList<String> result = new ArrayList<>();
+        // ArrayList<String> result = new ArrayList<>();
+
+        for (File file : text_dir.listFiles())
+            if (file.isFile())
+                files.add(file);
+
+        System.out.println(files.size());
+
+
+        // File text = files.get(
+        //     random.nextInt(files.size()-1)
+        // );
+
+        // try (
+        //     FileInputStream input = new FileInputStream(text);
+        //   ) {
+        //     result = new ArrayList<String>(
+        //         Files.readAllLines(text.toPath())
+        //     );
+      
+        //     input.close();
+        //   } catch (IOException exception) {
+        // //   } catch (IOException | ClassNotFoundException exception) {
+        //     exception.printStackTrace();
+        //   }
+
+        //   return result.get(0);
+        return " ";
     }
 }

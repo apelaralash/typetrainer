@@ -16,8 +16,6 @@ public final class UserInput implements KeyListener {
     public final void keyTyped(KeyEvent event) {
         Character temp = event.getKeyChar();
 
-        // event.VK_BACK_SPACE
-        
         if (!Character.isLetterOrDigit(temp) &&
             !Character.isSpaceChar(temp) &&
             temp != ',' &&
@@ -25,7 +23,8 @@ public final class UserInput implements KeyListener {
             temp != '!' &&
             temp != '?' &&
             temp != ';' &&
-            temp != ':'
+            temp != ':' &&
+            temp != KeyEvent.VK_BACK_SPACE
         )
             return;
 

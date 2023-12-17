@@ -36,9 +36,24 @@ public final class TextWidget implements Entity {
         if (indexOfCurrentLine >= wrappedText.size())
             return;
 
-        characterStates[indexOfCurrentLine][indexOfCurrentChar] =
-            (wrappedText.get(indexOfCurrentLine)[indexOfCurrentChar] == typed_char) ?
-                CharacterState.Typed : CharacterState.Error;
+        // backspace
+        if (typed_char == '\b') {
+            characterStates[indexOfCurrentLine][indexOfCurrentChar] = CharacterState.NonTyped;
+
+            if (indexOfCurrentChar > 0)
+                indexOfCurrentChar -= 1;
+            else if (indexOfCurrentChar == 0 && indexOfCurrentLine > 0) {
+                indexOfCurrentLine -= 1;
+                indexOfCurrentChar = wrappedText.get(indexOfCurrentLine).length-1;
+            }
+
+            return;
+        }
+        else {
+            characterStates[indexOfCurrentLine][indexOfCurrentChar] =
+                (wrappedText.get(indexOfCurrentLine)[indexOfCurrentChar] == typed_char) ?
+                    CharacterState.Typed : CharacterState.Error;
+        }
 
         indexOfCurrentChar += 1;
 

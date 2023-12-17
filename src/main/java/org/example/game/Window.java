@@ -2,8 +2,6 @@ package org.example.game;
 
 import org.example.game.utils.LambdaHolder;
 
-import javafx.geometry.Dimension2D;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.BoxLayout;
