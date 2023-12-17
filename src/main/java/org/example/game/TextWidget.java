@@ -38,7 +38,6 @@ public final class TextWidget implements Entity {
 
         // backspace
         if (typed_char == '\b') {
-            characterStates[indexOfCurrentLine][indexOfCurrentChar] = CharacterState.NonTyped;
 
             if (indexOfCurrentChar > 0)
                 indexOfCurrentChar -= 1;
@@ -46,14 +45,15 @@ public final class TextWidget implements Entity {
                 indexOfCurrentLine -= 1;
                 indexOfCurrentChar = wrappedText.get(indexOfCurrentLine).length-1;
             }
-
+            
+            characterStates[indexOfCurrentLine][indexOfCurrentChar] = CharacterState.NonTyped;
+            
             return;
         }
-        else {
-            characterStates[indexOfCurrentLine][indexOfCurrentChar] =
-                (wrappedText.get(indexOfCurrentLine)[indexOfCurrentChar] == typed_char) ?
-                    CharacterState.Typed : CharacterState.Error;
-        }
+
+        characterStates[indexOfCurrentLine][indexOfCurrentChar] =
+            (wrappedText.get(indexOfCurrentLine)[indexOfCurrentChar] == typed_char) ?
+                CharacterState.Typed : CharacterState.Error;
 
         indexOfCurrentChar += 1;
 

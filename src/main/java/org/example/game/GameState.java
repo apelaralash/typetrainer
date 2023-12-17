@@ -23,12 +23,12 @@ public final class GameState implements Serializable {
         endTime = null;
         
         // TO-DO: read text from file but from another place
-        // text = new TextWidget(
-            loadText();
-        // );
         text = new TextWidget(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            loadText()
         );
+        // text = new TextWidget(
+        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        // );
     }
     
     public void onInput(Character symbol) {
@@ -103,35 +103,29 @@ public final class GameState implements Serializable {
     private final String loadText() {
         File text_dir = new File(CommonSettings.pathToTexts);
         ArrayList<File> files = new ArrayList<>();
-        // Random random = new Random();
-        // ArrayList<String> result = new ArrayList<>();
-        // ArrayList<String> result = new ArrayList<>();
+        Random random = new Random();
+        ArrayList<String> result = new ArrayList<>();
 
         for (File file : text_dir.listFiles())
             if (file.isFile())
                 files.add(file);
 
-        System.out.println(files.size());
+        File text = files.get(
+            random.nextInt(files.size())
+        );
 
+        try (FileInputStream input = new FileInputStream(text);)
+        {
+            result = new ArrayList<String> (
+                Files.readAllLines(text.toPath())
+            );
+            input.close();
+          } catch (IOException exception) {
+        //   } catch (IOException | ClassNotFoundException exception) {
+            exception.printStackTrace();
+          }
 
-        // File text = files.get(
-        //     random.nextInt(files.size()-1)
-        // );
-
-        // try (
-        //     FileInputStream input = new FileInputStream(text);
-        //   ) {
-        //     result = new ArrayList<String>(
-        //         Files.readAllLines(text.toPath())
-        //     );
-      
-        //     input.close();
-        //   } catch (IOException exception) {
-        // //   } catch (IOException | ClassNotFoundException exception) {
-        //     exception.printStackTrace();
-        //   }
-
-        //   return result.get(0);
-        return " ";
+          return result.get(0);
+        // return " ";
     }
 }
