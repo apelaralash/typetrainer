@@ -3,7 +3,8 @@ package org.example;
 import org.example.game.Game;
 
 // TO-DO:
-// - text aligment in center
+// - text removal
+// - refactoring of TextWidget
 // - text from file
 // - UI and restart
 

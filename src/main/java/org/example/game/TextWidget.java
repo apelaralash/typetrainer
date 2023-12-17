@@ -10,23 +10,21 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 public final class TextWidget implements Entity {
-    private char[][] wrappedText;
+    private ArrayList<char[]> wrappedText;
     private CharacterState[][] characterStates;
     private int indexOfCurrentLine, indexOfCurrentChar;
     private int numberOfWords;
 
-    public TextWidget(Graphics graphics, String text_to_type) {
+    public TextWidget(String text_to_type) {
         indexOfCurrentChar = 0;
         indexOfCurrentLine = 0;
         numberOfWords = 0;
 
-        graphics.setFont(CommonSettings.font);
-        FontMetrics font_metrics = graphics.getFontMetrics();
-        wrappedText = getTextToDraw(text_to_type, font_metrics);
+        wrappedText = wrapText(text_to_type.split(" "));
 
-        characterStates = new CharacterState[wrappedText.length][];
+        characterStates = new CharacterState[wrappedText.size()][];
         for (int index=0; index < characterStates.length; ++index) {
-            characterStates[index] = new CharacterState[wrappedText[index].length];
+            characterStates[index] = new CharacterState[wrappedText.get(index).length];
             Arrays.fill(characterStates[index], CharacterState.NonTyped);
         }
     }
@@ -35,90 +33,79 @@ public final class TextWidget implements Entity {
         if (wrappedText == null)
             return;
         
-        if (indexOfCurrentLine >= wrappedText.length)
+        if (indexOfCurrentLine >= wrappedText.size())
             return;
 
         characterStates[indexOfCurrentLine][indexOfCurrentChar] =
-            (wrappedText[indexOfCurrentLine][indexOfCurrentChar] == typed_char) ?
+            (wrappedText.get(indexOfCurrentLine)[indexOfCurrentChar] == typed_char) ?
                 CharacterState.Typed : CharacterState.Error;
 
         indexOfCurrentChar += 1;
 
-        if (wrappedText[indexOfCurrentLine].length == indexOfCurrentChar) {
+        if (wrappedText.get(indexOfCurrentLine).length == indexOfCurrentChar) {
             indexOfCurrentChar = 0;
             indexOfCurrentLine += 1;
         }
     }
 
-    public final boolean complete() {
-        return (
-            indexOfCurrentLine >= wrappedText.length
-        );
-    }
-        
-    private final ArrayList<Integer> getIndicesOfTheLastWordsInLines(String[] words, FontMetrics font_metrics) {
-        ArrayList<Integer> last_words_indeices = new ArrayList<>();  // indices_of_the_last_words_in_lines
-
-        int space_char_width = font_metrics.charWidth(' ');
-        int length_of_line = 0;
-        int next_length_of_line = 0;
-        int index = 0;
-
-        // looking for indices of the last words in lines
-        for (; index < words.length; ++index) {
-            length_of_line = 0;
-            next_length_of_line = 0;
-    
-            while (next_length_of_line < CommonSettings.lenghtOfLine) {
-                length_of_line += font_metrics.stringWidth(words[index] + space_char_width);
-
-                index += 1;
-
-                if (index + 1 >= words.length)
-                    break;
-
-                int next_word_length = font_metrics.stringWidth(words[index + 1]);
-                next_length_of_line += length_of_line + next_word_length + space_char_width;
-
-                // that was here but we skip last word
-                // need to check on valid when it in other place
-                // index += 1;
-            }
-
-            last_words_indeices.add(index);
-        }
-
-        return last_words_indeices;
-    }
-
-    private final char[][] getTextToDraw(String text, FontMetrics font_metrics) {
-        String[] words = text.split(" ");
-        numberOfWords = words.length;
-        ArrayList<Integer> last_words_indeices = getIndicesOfTheLastWordsInLines(words, font_metrics);
-        
-        char[][] result = new char[last_words_indeices.size()][];
+    private final ArrayList<char[]> wrapText(String[] words) {
+        ArrayList<char[]> result = new ArrayList<>();
         StringBuilder line = new StringBuilder();
-        int last_word_index = 0;
-        
-        // creating double dimension array for text what need to draw
-        for (int line_index=0; line_index < last_words_indeices.size(); ++line_index) {
-            for (
-                int word_index = last_word_index;
-                word_index < last_words_indeices.get(line_index);
-                ++word_index
-            ) {
-                line.append(words[word_index] + " ");
-                last_word_index = last_words_indeices.get(line_index);
+
+        for (int index=0; index < words.length; ++index) {
+            if (index + 1 == words.length) {
+                line.append(words[index] + " ");
+                result.add(line.toString().toCharArray());
+                break;
             }
-            line.deleteCharAt(line.length()-1); // delete last space char in line
+
+            if (line.length() + words[index].length() + 1 >= CommonSettings.lengthOfLine) {
+                result.add(line.toString().toCharArray());
+                line = new StringBuilder();
+            }
             
-            result[line_index] = line.toString().toCharArray();
-            line = new StringBuilder();
+            line.append(words[index] + " ");
         }
 
         return result;
     }
- 
+  
+    @Override
+    public final void draw(Graphics graphics) {
+        graphics.setFont(CommonSettings.font);
+        FontMetrics font_metrics = graphics.getFontMetrics();
+
+        int paddingX = 100;
+        int paddingY = (CommonSettings.windowSize.height - (font_metrics.getHeight() * wrappedText.size()))/2;
+        
+        int offsetX = 0;
+
+        for (int line_index=0; line_index < wrappedText.size(); ++line_index) {
+            for (int char_index=0; char_index < wrappedText.get(line_index).length; ++char_index) {
+                switch (characterStates[line_index][char_index]) {
+                    case NonTyped: graphics.setColor(Palette.nonTypedText); break;
+                    case Typed:    graphics.setColor(Palette.typedText); break;
+                    case Error:    graphics.setColor(Palette.errorText); break;
+                }
+                
+                graphics.drawChars(
+                    wrappedText.get(line_index),
+                    char_index,
+                    1,
+                    paddingX + offsetX,
+                    paddingY + line_index * font_metrics.getHeight()
+                    // paddingY + line_index * font_metrics.getHeight() + leading
+                );
+
+                offsetX += font_metrics.charWidth(wrappedText.get(line_index)[char_index]);
+            }
+
+            offsetX = 0;
+        }
+    }
+
+    @Override public final void update() {}
+     
     public final String accuracy() {
         int correct = 0;
         int total_chars = 0;
@@ -137,39 +124,9 @@ public final class TextWidget implements Entity {
         return String.format("3%s", (double)numberOfWords/totalTime);
     }
 
-    @Override
-    public final void draw(Graphics graphics) {
-        graphics.setFont(CommonSettings.font);
-        FontMetrics font_metrics = graphics.getFontMetrics();
-
-        int offsetX = 0;
-        int paddingX = (CommonSettings.windowSize.width - CommonSettings.lenghtOfLine) / 2; // need to fix should be 2!
-        int leading = new Double(
-            CommonSettings.fontSize * CommonSettings.leading_factor
-        ).intValue();
-
-        for (int line_index=0; line_index < wrappedText.length; ++line_index) {
-            for (int char_index=0; char_index < wrappedText[line_index].length; ++char_index) {
-                switch (characterStates[line_index][char_index]) {
-                    case NonTyped: graphics.setColor(Palette.nonTypedText); break;
-                    case Typed:    graphics.setColor(Palette.typedText); break;
-                    case Error:    graphics.setColor(Palette.errorText); break;
-                }
-                
-                graphics.drawChars(
-                    wrappedText[line_index],
-                    char_index,
-                    1,
-                    paddingX + offsetX,
-                    line_index * font_metrics.getHeight() + leading
-                );
-
-                offsetX += font_metrics.charWidth(wrappedText[line_index][char_index]);
-            }
-
-            offsetX = 0;
-        }
-    }
-
-    @Override public final void update() {}
+    public final boolean complete() {
+        return (
+            indexOfCurrentLine >= wrappedText.size()
+        );
+    }  
 }

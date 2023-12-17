@@ -5,14 +5,12 @@ import java.awt.Font;
 
 public class CommonSettings {
 // window
-    public static final Dimension windowSize = new Dimension(1280, 512);
-    // public static final Dimension windowSize = new Dimension(1280, 1024);
+    public static final Dimension windowSize = new Dimension(1280, 960);
 
 // font
     public static final Integer fontSize = 48; // in px
     public static final Font font = new Font("Arial", Font.BOLD, fontSize);
-    public static final Integer lenghtOfLine = 1200; // in px
-    public static final Double leading_factor = 1.5;
+    public static final Integer lengthOfLine = 40; // in chars
 
 // serizalization
     public static final String pathToSaveFile = "save.bin";

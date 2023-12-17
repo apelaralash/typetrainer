@@ -1,7 +1,7 @@
 package org.example.game;
 
 import java.awt.Graphics;
-import java.util.concurrent.TimeUnit;
+// import java.util.concurrent.TimeUnit;
 
 // Serialization )))
 import java.io.File;
@@ -28,7 +28,6 @@ public final class GameState implements Serializable {
         
         // TO-DO: read text from file but from another place
         text = new TextWidget(
-            graphics,
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         );
     }
@@ -40,8 +39,6 @@ public final class GameState implements Serializable {
         if (startTime == null)
             startTime = System.currentTimeMillis(); // nanoTime
 
-        // TO-DO: change wpm, accuracy, etc.
-        
         text.onInput(symbol);
     }
 
@@ -63,8 +60,8 @@ public final class GameState implements Serializable {
     public final boolean testCompleted() { return text.complete(); }
 
     public static void dump(GameState state, final String path_to_save_file) {
-        if (state.testCompleted())
-            return;
+        // if (state.testCompleted())
+        //     return;
 
         try (ObjectOutputStream output_stream =
             new ObjectOutputStream(

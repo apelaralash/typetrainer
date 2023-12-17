@@ -15,6 +15,8 @@ public final class UserInput implements KeyListener {
     @Override
     public final void keyTyped(KeyEvent event) {
         Character temp = event.getKeyChar();
+
+        // event.VK_BACK_SPACE
         
         if (!Character.isLetterOrDigit(temp) &&
             !Character.isSpaceChar(temp) &&
