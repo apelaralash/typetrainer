@@ -1,3 +1,6 @@
+.vscode
+save.bin
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -34,9 +37,6 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
-
-### VS Code ###
-.vscode/
 
 ### Mac OS ###
 .DS_Store
